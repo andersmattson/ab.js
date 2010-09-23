@@ -6,7 +6,8 @@ It works by randomly changing the content and or href attribute of html elements
 The following example would test two cases of content and style for a link (A tag) with id "id", the original one and the one specified in the function call:
 	AB.link('id', {param:'unique_param', html:'Buy this', style: 'color: red; font-weight: bold'});
 
-Testing more than two cases is just a matter of adding another 
+Testing more than two cases is just a matter of adding another object after the first one:
+	AB.link('id', {html:'Buy this', style: 'color: red'}, {html:'Buy that', style:'color: blue'});
 
 **ab.js** is dually licensed under the GPL and MIT licenses and is thereby free to use in virtually any situation.
 
