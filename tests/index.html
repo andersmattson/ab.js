@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="utf-8">
+	<title>AB testing with javascript</title>
+	<meta name="description" content="" />
+  	<meta name="keywords" content="" />
+	<meta name="robots" content="" />
+	<script src="../src/ab.js"></script>
+	<script>
+		window.onload = function(){
+			AB.link('ab1', {html:'a couple of'});
+			AB.link('ab2', {html:'tested links', style:"color: green"}, {html:'other links', style:"color: yellow"});
+			AB.link('ab3', {html:'a couple of', style:{color: 'red'}});
+			AB.link('ab4', {html:'tested links', style:"color: green"}, {html:'other links', style:"color: yellow"});
+		}
+	</script>
+</head>
+<body>
+	Some text and <a id="ab1" href="link/to/content.html">some</a> <a id="ab2" href="link/to/other/content.php?id=123">links</a>.<br>
+	Some text and <a id="ab3" href="link/to/content.html#hash">some</a> <a id="ab4" href="link/to/other/content.php?id=123#hash">links</a>.<br>
+</body>
+</html>
