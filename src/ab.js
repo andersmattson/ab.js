@@ -8,7 +8,7 @@
 
 var AB = window.AB = AB || {
 	param: 'ab_js=',
-	link: function(){
+	vary: function(){
 		
 		if(arguments.length < 2)
 			return;
