@@ -1,3 +1,11 @@
+/*
+ *	ab.js JavaScript A/B-testing tool v0.1
+ *	
+ *	Copyright 2010, Anders Mattson
+ *	Licensed under the MIT or GPL Version 2 licenses.
+ *	
+ */
+
 var AB = window.AB = AB || {
 	param: 'ab_js=',
 	link: function(){
