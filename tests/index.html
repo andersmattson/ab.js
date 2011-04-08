@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
 <head>
   <meta charset="utf-8">
 	<title>AB testing with javascript</title>
-	<meta name="description" content="" />
-  	<meta name="keywords" content="" />
-	<meta name="robots" content="" />
-	<script src="../src/ab.js"></script>
-	<script>
+	<script type="text/javascript" src="ab.js"></script>
+	<script type="text/javascript">
 		window.onload = function(){
-			AB.vary('ab1', {html:'a couple of'});
-			AB.vary('ab2', {html:'tested links', style:"color: green"}, {html:'other links', style:"color: yellow"});
-			AB.vary('ab3', {html:'a couple of', style:{color: 'red'}});
-			AB.vary('ab4', {html:'tested links', style:"color: green"}, {html:'other links', style:"color: yellow"});
+
+			AB.vary({
+				elem: 'ab1',
+				name: 'ab1'/*, 
+				url: 'http://localhost/test/ab/'*/
+			}, {
+				html:'a couple of'
+			}, {
+				html:'a few'
+			});
+			
+			AB.vary({
+				elem: document.getElementById('ab2'),
+				name: 'ab2'
+			}, {
+				html:'tested links', 
+				style:{
+					color: "green"
+				}
+			}, {
+				html:'other links', 
+				style:{
+					color: "yellow"
+				}
+			});
+
 		}
 	</script>
 </head>
