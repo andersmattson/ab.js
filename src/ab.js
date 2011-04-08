@@ -30,7 +30,7 @@ var AB = window.AB = {
 		var j = d.elem || d,
 			e = typeof j == "string" ? document.getElementById(j) : j;
 		
-		// Applying the variation to multiple DOM elements
+		// Applying the variation to multiple DOM elements or die if no element was found
 		if(!e || e.constructor == Array) {
 
 			for(j in e) {
