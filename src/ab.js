@@ -7,7 +7,7 @@
  *  AB.vary( Settings (Object), Variation #1 (Object) [, Variation #2 (Object) [, ...]] )
  *  
  *  AB.vary({
- *  		name: 'unique_query_parameter_name',
+ *  		name: 'unique_query_and_cookie_parameter_name',
  *  		elem: 'id_string_or_DOM_Node',
  *  		url: 'http://validation.url.for/variation'
  *  	},{
@@ -28,17 +28,18 @@ var AB = window.AB = {
 	vary: function(d){
 
 		var j = d.elem || d,
-			e = typeof j == "string" ? document.getElementById(j) : j;
+			e = typeof j == "string" ? document.getElementById(j) : j,
+			o, p, c, h = document.location.href, A = arguments, P = (d.name || 'ab_test');
 		
-		// Applying the variation to multiple DOM elements or die if no element was found
+		// Applying the variation to multiple DOM elements
 		if(!e || e.constructor == Array) {
 
 			for(j in e) {
 				if(!d.elem)
 					d = {};
 				d.elem = e[j];
-				arguments[0] = d;
-				AB.vary.apply(this, arguments);
+				A[0] = d;
+				AB.vary.apply(this, A);
 			}
 
 			return;
@@ -46,16 +47,13 @@ var AB = window.AB = {
 		}
 		
 		// Check if the variation is for a specific url and if so, check that it matches the current one.
-		if(d.url && !AB.compareUrls(d.url, document.location.href))
+		if(d.url && ((d.url.exec && !h.match(d.url)) || (typeof d.url == "string" && AB.suri(d.url) != AB.suri(h))))
 			return;
 		
-		
-		var o, p, c, h = document.location.href, A = arguments, P = (d.name || 'ab_js'), 
-			i = (c = document.cookie.match(new RegExp("(?:^|[^a-z0-9_\-]+)" + P + "=([0-9]+)", "i"))) ? 
-				c[1]*1 : 
-				(c = h.match(new RegExp("[\&\?]+"+P+"=([0-9]+)", "i"))) ? 
-				c[1]*1 : 
-				Math.floor(A.length*Math.random());
+		// Pick out which variation to use from cookie, url or random (in that order)
+		var i = (c = document.cookie.match(new RegExp("(?:^|[^a-z0-9_\-]+)" + P + "=([0-9]+)", "i"))) ? 
+				c[1]*1 : (c = h.match(new RegExp("[\&\?]+"+P+"=([0-9]+)", "i"))) ? 
+				c[1]*1 : Math.floor(A.length*Math.random());
 		
 		o = i == 0 || i > A.length - 1 ? {} : A[i];
 		
@@ -92,11 +90,25 @@ var AB = window.AB = {
 			fn.apply(this, arguments);
 	},
 	
-	// Checks if two urls points to the same source, regardless of the order between the parameters.
-	// The hash tag is ignored.
-	compareUrls: function(a, b) {
-		var as, bs;
-		return a == b || ((as = a.split('#')[0].split('?')).length > 1 ? as[0] + '?' + as[1].split('&').sort().join('&') : as[0]) == 
-			   ((bs = b.split('#')[0].split('?')).length > 1 ? bs[0] + '?' + bs[1].split('&').sort().join('&') : bs[0]);
-	}
+	/*
+	 * A modified version of parseUri 1.2.2 by (c) Steven Levithan <stevenlevithan.com> released under MIT License
+	 * 
+	 * Parses and recompiles urls for better comparison
+	 */
+	suri: function(str, fragment) {
+		var	m = AB.reg[0].exec(str), p = [];
+		
+		(m[12] || '').replace(AB.reg[1], function (a, b, c) {
+			if (a) p.push(b);
+		});
+		
+		m[12] = p.sort().join("&");
+		return m[1] + '://' + (m[4] || '') + (m[5] ? ':' + m[5] : '') + (m[4] || m[5] ? '@' : '') + (m[6] || '') + (m[7] ? ':' + m[7] : '') + (m[9] || '') + (m[12] ? '?' + m[12] : '') + (m[13] && fragment ? '#' + m[13] : '');
+	},
+	
+	// Putting regexp here to precompile them.
+	reg: [
+		/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/,
+		/(?:^|&)([^&=]*=?[^&]*)/g
+	] 
 };
