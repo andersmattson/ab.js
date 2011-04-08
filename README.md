@@ -5,7 +5,10 @@ It works by randomly changing the content of DOM elements and generating unique 
 
 A/B testing is a really easy way of testing what works and what don't. Visitors to the site are randomly presented with different content and what works is measured by the clicks on the generated links in the different content.
 
-The following example would test two cases of content and style for a link (A tag) with id "mylink", the original one and the one specified in the function call:
+The syntax is:
+	AB.vary(settings, variation 1, variation 2, ...)
+
+The following example would test two cases of content and style for an element with id "mylink", the original one and the one specified in the function call:
 	AB.vary({
 			name: 'test_id',
 			elem: document.getElementById('mylink')
@@ -32,6 +35,8 @@ Testing more than two cases is just a matter of adding another object after the 
 				color: 'blue'
 			}
 		});
+
+
 
 **ab.js** is dually licensed under the GPL and MIT licenses.
 
