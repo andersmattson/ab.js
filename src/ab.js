@@ -4,36 +4,18 @@
  *	Copyright 2010, Anders Mattson
  *	Licensed under the MIT or GPL Version 2 licenses.
  *	
- *  AB.vary( Settings (Object), Variation #1 (Object) [, Variation #2 (Object) [, ...]] )
- *  
- *  AB.vary({
- *  		name: 'unique_query_and_cookie_parameter_name',
- *  		elem: 'id_string_or_DOM_Node',
- *  		url: 'http://validation.url.for/variation'
- *  	},{
- *  		html: 'html_content',
- *  		style: {
- *  			'css-attribute': 'css-attribute-value',
- *  			...
- *  		},
- *  		fn: function(){...},
- *  		href: 'http://variation.url' (starting with a plus appends the string to the urls)
- *  	},{
- *  		...
- *  });
+ *  For more info, see https://github.com/andersmattson/ab.js
  */
 
 var AB = window.AB = {
 
 	vary: function(d){
-
 		var j = d.elem || d,
 			e = typeof j == "string" ? document.getElementById(j) : j,
 			o, p, c, h = document.location.href, A = arguments, P = (d.name || 'ab_test');
 		
 		// Applying the variation to multiple DOM elements
 		if(!e || e.constructor == Array) {
-
 			for(j in e) {
 				if(!d.elem)
 					d = {};
@@ -41,9 +23,7 @@ var AB = window.AB = {
 				A[0] = d;
 				AB.vary.apply(this, A);
 			}
-
 			return;
-
 		}
 		
 		// Check if the variation is for a specific url and if so, check that it matches the current one.
@@ -93,17 +73,21 @@ var AB = window.AB = {
 	/*
 	 * A modified version of parseUri 1.2.2 by (c) Steven Levithan <stevenlevithan.com> released under MIT License
 	 * 
-	 * Parses and recompiles urls for better comparison
+	 * Parses and recompiles urls for better comparison. If i is set the function returns a specific part of the url:
+	 * 0 - source, 1 - protocol, 2 - authority, 3 - userInfo, 4 - user, 5 - password, 6 - host, 
+	 * 7 - port, 8 - relative, 9 - path, 10 - directory, 11 - file, 12 - query, 13 - anchor.
 	 */
-	suri: function(str, fragment) {
+	suri: function(str, fragment, i) {
 		var	m = AB.reg[0].exec(str), p = [];
 		
-		(m[12] || '').replace(AB.reg[1], function (a, b, c) {
-			if (a) p.push(b);
-		});
-		
-		m[12] = p.sort().join("&");
-		return m[1] + '://' + (m[4] || '') + (m[5] ? ':' + m[5] : '') + (m[4] || m[5] ? '@' : '') + (m[6] || '') + (m[7] ? ':' + m[7] : '') + (m[9] || '') + (m[12] ? '?' + m[12] : '') + (m[13] && fragment ? '#' + m[13] : '');
+		if(m[12] && (i == 12 || (i !== 0 && !i))){
+			m[12].replace(AB.reg[1], function (a, b) {
+				if (a) p.push(b);
+			});
+			m[12] = p.sort().join("&");
+		}
+
+		return i === 0 || i ? m[i] : m[1] + '://' + (m[4] || '') + (m[5] ? ':' + m[5] : '') + (m[4] || m[5] ? '@' : '') + (m[6] || '') + (m[7] ? ':' + m[7] : '') + (m[9] || '') + (m[12] ? '?' + m[12] : '') + (m[13] && fragment ? '#' + m[13] : '');
 	},
 	
 	// Putting regexp here to precompile them.
